@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>画板</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="canvas" width="150" height="150"></canvas>
+  <script type="text/javascript">
+    let canvas = document.getElementById('canvas');
+    // 屏幕宽高
+    canvas.width = document.documentElement.clientWidth
+    canvas.height = document.documentElement.clientHeight
+    let ctx = canvas.getContext('2d');
+    ctx.lineWidth = 20
+    ctx.strokeStyle = "green"
+    ctx.lineCap = "round"
+
+    let painting = false
+    let last //上次x,y的位置
+
+    // 判断是否为触屏装置
+    var isTouchDevice = 'ontouchstart' in document.documentElement;
+    if(isTouchDevice){
+      canvas.ontouchstart = (e) => {
+        let x = e.touches[0].clientX
+        let y = e.touches[0].clientY
+        last = [x,y]
+      }
+      canvas.ontouchmove = (e) => {
+        let x = e.touches[0].clientX
+        let y = e.touches[0].clientY
+        ctx.beginPath();
+        ctx.moveTo(last[0],last[1])
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        last = [x,y]
+      }
+    }else{
+      canvas.onmousedown = (e) => {
+        painting = true
+        last = [e.clientX, e.clientY]
+      }
+      canvas.onmousemove = (e) => {
+        if(painting === true){
+          ctx.beginPath();
+          ctx.moveTo(last[0],last[1])
+          ctx.lineTo(e.clientX, e.clientY);
+          ctx.stroke();
+          last = [e.clientX, e.clientY]
+        }
+      }
+      canvas.onmouseup = () => {
+        painting = false
+      }
+    }
+
+
+  </script>
+</body>
+</html>
